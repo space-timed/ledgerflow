@@ -13,4 +13,5 @@ import java.util.UUID;
 public interface JournalEntryRepository extends JpaRepository<JournalEntry, UUID> {
     Optional<JournalEntry> findByReferenceTypeAndReferenceId(ReferenceType referenceType, String referenceId);
     List<JournalEntry> findByReferenceType(ReferenceType referenceType);
+    List<JournalEntry> findTop50ByOrderByPostedAtDesc();
 }

@@ -49,11 +49,24 @@ public class LedgerController {
             List<JournalLineResponse> lines
     ) {}
 
+    @GetMapping("/journals")
+    @Operation(summary = "List recent double-entry journal entries")
+    public ResponseEntity<List<JournalEntryResponse>> listJournals() {
+        List<JournalEntry> entries = ledgerService.getRecentJournals();
+        List<JournalEntryResponse> responses = entries.stream()
+                .map(this::mapToResponse)
+                .toList();
+        return ResponseEntity.ok(responses);
+    }
+
     @GetMapping("/journals/{id}")
     @Operation(summary = "Inspect a double-entry journal entry and verified balanced postings")
     public ResponseEntity<JournalEntryResponse> getJournalEntry(@PathVariable UUID id) {
         JournalEntry entry = ledgerService.getJournalEntry(id);
+        return ResponseEntity.ok(mapToResponse(entry));
+    }
 
+    private JournalEntryResponse mapToResponse(JournalEntry entry) {
         long debits = 0;
         long credits = 0;
         List<JournalLineResponse> lineResponses = new java.util.ArrayList<>();
@@ -77,7 +90,7 @@ public class LedgerController {
             ));
         }
 
-        JournalEntryResponse response = new JournalEntryResponse(
+        return new JournalEntryResponse(
                 entry.getId(),
                 entry.getReferenceId(),
                 entry.getReferenceType().name(),
@@ -88,7 +101,5 @@ public class LedgerController {
                 credits,
                 lineResponses
         );
-
-        return ResponseEntity.ok(response);
     }
 }

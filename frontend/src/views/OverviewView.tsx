@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   DollarSign,
   Users,
@@ -8,8 +7,11 @@ import {
   CheckCircle2,
   AlertTriangle,
   ArrowUpRight,
+  Sparkles,
+  Terminal,
 } from 'lucide-react';
 import { Payment, Wallet, JournalEntry, OutboxStats, ReconciliationRun } from '../types';
+import { api } from '../services/api';
 
 interface OverviewViewProps {
   payments: Payment[];
@@ -47,6 +49,42 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
           <p className="page-subtitle">Real-time health, transaction throughput, and accounting invariant monitoring</p>
         </div>
       </div>
+
+      {!api.getApiKey() && (
+        <div style={{
+          backgroundColor: '#0d1d31',
+          border: '1px solid #1d4ed8',
+          borderRadius: '8px',
+          padding: '1.25rem 1.5rem',
+          marginBottom: '1.75rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '1.5rem'
+        }}>
+          <div>
+            <div style={{ fontWeight: 600, color: '#60a5fa', marginBottom: '0.35rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '1rem' }}>
+              <Sparkles size={18} color="#60a5fa" />
+              <span>Multi-Tenant Sandbox Session Not Yet Selected</span>
+            </div>
+            <p style={{ margin: 0, fontSize: '0.875rem', color: '#94a3b8', lineHeight: 1.5 }}>
+              LedgerFlow enforces multi-tenant merchant isolation. To view transactions, double-entry journals, and customer wallets, load the pre-seeded demo merchant or use <strong>"Sandbox Simulator"</strong> in the sidebar.
+            </p>
+          </div>
+          <div style={{ display: 'flex', gap: '0.75rem', flexShrink: 0 }}>
+            <button
+              className="btn btn-primary"
+              style={{ padding: '0.55rem 1.1rem', fontSize: '0.85rem' }}
+              onClick={() => {
+                api.setApiKey('lf_live_fdjxCAdQBtTpu5GytPKYkRqjkk-KhUKE');
+                window.location.reload();
+              }}
+            >
+              <Sparkles size={14} /> Load Demo Merchant (1-Click)
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* KPI Grid */}
       <div className="kpi-grid">

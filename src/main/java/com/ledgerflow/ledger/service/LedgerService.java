@@ -129,4 +129,9 @@ public class LedgerService {
         return journalEntryRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "Journal entry not found: " + id));
     }
+
+    @Transactional(readOnly = true)
+    public List<JournalEntry> getRecentJournals() {
+        return journalEntryRepository.findTop50ByOrderByPostedAtDesc();
+    }
 }

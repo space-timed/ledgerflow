@@ -21,13 +21,15 @@ public class ApiKeyAuthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String path = request.getRequestURI();
 
-        // Skip auth for documentation, actuator, and public merchant onboarding endpoints
+        // Skip auth for documentation, actuator, public merchant onboarding, and operational monitors
         if (path.startsWith("/swagger-ui") ||
             path.startsWith("/v3/api-docs") ||
             path.startsWith("/actuator") ||
             (path.equals("/api/v1/merchants") && request.getMethod().equalsIgnoreCase("POST")) ||
             path.startsWith("/api/v1/merchants/admin") ||
-            path.startsWith("/api/v1/mock")) {
+            path.startsWith("/api/v1/mock") ||
+            (path.startsWith("/api/v1/events") && request.getMethod().equalsIgnoreCase("GET")) ||
+            (path.startsWith("/api/v1/reconciliation/runs") && request.getMethod().equalsIgnoreCase("GET"))) {
             return true;
         }
 
