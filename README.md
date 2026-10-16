@@ -95,7 +95,6 @@ powershell -ExecutionPolicy Bypass -File scripts/run-demo.ps1
 - [Performance Benchmarks & Concurrency Stress](docs/PERFORMANCE.md)
 - [Testing Matrix & Invariant Verification](docs/TESTING.md)
 - [Architectural Decision Records (ADR)](docs/DECISIONS.md)
-- [Step-by-Step Implementation Plan](docs/IMPLEMENTATION_PLAN.md)
 
 ---
 

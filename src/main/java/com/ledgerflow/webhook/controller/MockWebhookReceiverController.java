@@ -50,13 +50,13 @@ public class MockWebhookReceiverController {
         return ResponseEntity.ok(new ReceiverResponse("RECEIVED", Instant.now(), receivedDeliveries.size()));
     }
 
-    @GetMapping("/deliveries")
+    @GetMapping({"/deliveries", "/recent"})
     @Operation(summary = "Inspect all captured mock webhook deliveries")
     public ResponseEntity<List<ReceivedWebhook>> getDeliveries() {
         return ResponseEntity.ok(new ArrayList<>(receivedDeliveries));
     }
 
-    @DeleteMapping("/deliveries")
+    @DeleteMapping({"/deliveries", "/recent"})
     @Operation(summary = "Clear mock webhook delivery buffer")
     public ResponseEntity<Void> clearDeliveries() {
         receivedDeliveries.clear();

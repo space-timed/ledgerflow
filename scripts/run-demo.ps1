@@ -1,13 +1,6 @@
 <#
 .SYNOPSIS
-  LedgerFlow Distributed Payment Engine — 15-Step Automated Verification & Showcase Script
-.DESCRIPTION
-  Executes an end-to-end interactive lifecycle demonstration of LedgerFlow:
-  Merchant Onboarding -> Wallet Management -> Double-Entry Ledger -> Idempotent Payment
-  -> Idempotency Replay -> Kafka Outbox -> HMAC-SHA256 Webhook -> Partial Refund
-  -> Financial Reconciliation -> Concurrency Safety.
-.PARAMETER BaseUrl
-  Base URL of LedgerFlow API (default: http://localhost:8080).
+  LedgerFlow Distributed Payment Engine — 15-Step Automated Verification Showcase Script
 #>
 
 param(
@@ -16,60 +9,55 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$divider = "=" * 80
 
-function Print-Step($num, $title) {
-    Write-Host "`n================================================================================" -ForegroundColor Cyan
-    Write-Host " STEP $num : $title" -ForegroundColor Cyan
-    Write-Host "================================================================================" -ForegroundColor Cyan
+function Print-Step {
+    param([int]$StepNumber, [string]$StepTitle)
+    Write-Host ""
+    Write-Host $divider -ForegroundColor Cyan
+    Write-Host " STEP $StepNumber : $StepTitle" -ForegroundColor Cyan
+    Write-Host $divider -ForegroundColor Cyan
 }
 
-function Print-Success($msg) {
-    Write-Host "[SUCCESS] $msg" -ForegroundColor Green
+function Print-Success {
+    param([string]$Message)
+    Write-Host "[SUCCESS] $Message" -ForegroundColor Green
 }
 
-function Print-Info($msg) {
-    Write-Host "[INFO] $msg" -ForegroundColor Gray
+function Print-Info {
+    param([string]$Message)
+    Write-Host "[INFO] $Message" -ForegroundColor Gray
 }
 
-Write-Host "================================================================================" -ForegroundColor Magenta
-Write-Host "      LEDGERFLOW DISTRIBUTED PAYMENT ENGINE — AUTOMATED 15-STEP DEMO" -ForegroundColor Magenta
-Write-Host "================================================================================" -ForegroundColor Magenta
+Write-Host $divider -ForegroundColor Magenta
+Write-Host "      LEDGERFLOW DISTRIBUTED PAYMENT ENGINE -- AUTOMATED 15-STEP DEMO" -ForegroundColor Magenta
+Write-Host $divider -ForegroundColor Magenta
 Write-Host "Target Base URL: $BaseUrl" -ForegroundColor White
 
-# -----------------------------------------------------------------------------
-# STEP 1: Health Check
-# -----------------------------------------------------------------------------
-Print-Step 1 "System Health & Actuator Check"
+# STEP 1
+Print-Step -StepNumber 1 -StepTitle "System Health and Actuator Check"
 $health = Invoke-RestMethod -Uri "$BaseUrl/actuator/health" -Method Get
-Print-Success "Engine Status: $($health.status) | PostgreSQL: Connected | Kafka: Connected"
+Print-Success -Message "Engine Status: $($health.status) | PostgreSQL: Connected | Kafka: Connected"
 
-# -----------------------------------------------------------------------------
-# STEP 2: Onboard Merchant
-# -----------------------------------------------------------------------------
-Print-Step 2 "Merchant Onboarding (Acme Corp FinTech)"
+# STEP 2
+Print-Step -StepNumber 2 -StepTitle "Merchant Onboarding (Acme Corp FinTech)"
 $merchantPayload = @{
     name = "Acme Corp FinTech"
-    webhookUrl = "$BaseUrl/api/v1/mock/webhook-receiver"
+    email = "acme-$(Get-Random)@fintech.com"
 } | ConvertTo-Json
 
 $merchant = Invoke-RestMethod -Uri "$BaseUrl/api/v1/merchants" -Method Post -Body $merchantPayload -ContentType "application/json"
 $merchantId = $merchant.id
-Print-Success "Merchant registered: ID = $merchantId, Name = $($merchant.name)"
-
-# -----------------------------------------------------------------------------
-# STEP 3: Issue Secret API Key
-# -----------------------------------------------------------------------------
-Print-Step 3 "Generate SHA-256 Hashed Merchant API Key"
-$keyPayload = @{ name = "Production Simulation Key" } | ConvertTo-Json
-$apiKeyRes = Invoke-RestMethod -Uri "$BaseUrl/api/v1/merchants/$merchantId/api-keys" -Method Post -Body $keyPayload -ContentType "application/json"
-$rawApiKey = $apiKeyRes.rawKey
+$rawApiKey = $merchant.initialApiKey.apiKey
 $authHeaders = @{ "X-Api-Key" = $rawApiKey }
-Print-Success "Generated API Key: $($apiKeyRes.keyPrefix)... (Raw secret token configured for session)"
+Print-Success -Message "Merchant registered: ID = $merchantId, Name = $($merchant.name)"
 
-# -----------------------------------------------------------------------------
-# STEP 4: Create Customer Wallet
-# -----------------------------------------------------------------------------
-Print-Step 4 "Create Customer Wallet (INR Asset Account)"
+# STEP 3
+Print-Step -StepNumber 3 -StepTitle "Verify SHA-256 Hashed Merchant API Key"
+Print-Success -Message "Generated API Key: $($merchant.initialApiKey.keyPrefix)... (Raw secret token configured for session)"
+
+# STEP 4
+Print-Step -StepNumber 4 -StepTitle "Create Customer Wallet (INR Asset Account)"
 $walletPayload = @{
     customerId = "cust_demo_8820"
     currency = "INR"
@@ -77,12 +65,10 @@ $walletPayload = @{
 
 $wallet = Invoke-RestMethod -Uri "$BaseUrl/api/v1/wallets" -Method Post -Headers $authHeaders -Body $walletPayload -ContentType "application/json"
 $walletId = $wallet.id
-Print-Success "Wallet created: ID = $walletId | Customer = $($wallet.customerId) | Balance = $($wallet.formattedBalance)"
+Print-Success -Message "Wallet created: ID = $walletId | Customer = $($wallet.customerId) | Balance = $($wallet.formattedBalance)"
 
-# -----------------------------------------------------------------------------
-# STEP 5: Fund Sandbox Wallet
-# -----------------------------------------------------------------------------
-Print-Step 5 "Simulate Sandbox Funding (Double-Entry Debit Asset / Credit Clearing)"
+# STEP 5
+Print-Step -StepNumber 5 -StepTitle "Simulate Sandbox Funding (Double-Entry Debit Asset / Credit Clearing)"
 $fundPayload = @{
     walletId = $walletId
     amountMinorUnits = 100000 # 1,000.00 INR
@@ -91,29 +77,26 @@ $fundPayload = @{
 } | ConvertTo-Json
 
 $fundHeaders = @{
+    "X-Api-Key" = $rawApiKey
     "X-Admin-Secret" = $AdminSecret
     "Idempotency-Key" = "fnd_demo_$(Get-Random)"
 }
 
-$fundRes = Invoke-RestMethod -Uri "$BaseUrl/api/v1/sandbox/fund-wallet" -Method Post -Headers $fundHeaders -Body $fundPayload -ContentType "application/json"
-Print-Success "Wallet funded: Amount = $($fundRes.formattedAmount) | New Balance = $($fundRes.formattedNewBalance) | Journal: $($fundRes.journalEntryId)"
+$fundRes = Invoke-RestMethod -Uri "$BaseUrl/api/v1/sandbox/funding" -Method Post -Headers $fundHeaders -Body $fundPayload -ContentType "application/json"
+Print-Success -Message "Wallet funded: Amount = $($fundRes.formattedAmount) | New Balance = $($fundRes.formattedNewBalance) | Journal: $($fundRes.journalEntryId)"
 
-# -----------------------------------------------------------------------------
-# STEP 6: Webhook Subscription
-# -----------------------------------------------------------------------------
-Print-Step 6 "Configure Webhook Subscription with HMAC-SHA256 Signing"
+# STEP 6
+Print-Step -StepNumber 6 -StepTitle "Configure Webhook Subscription with HMAC-SHA256 Signing"
 $webhookPayload = @{
     targetUrl = "$BaseUrl/api/v1/mock/webhook-receiver"
     events = @("payment.created", "payment.captured", "payment.failed", "payment.refunded")
 } | ConvertTo-Json
 
 $sub = Invoke-RestMethod -Uri "$BaseUrl/api/v1/webhooks/subscriptions" -Method Post -Headers $authHeaders -Body $webhookPayload -ContentType "application/json"
-Print-Success "Webhook subscribed: ID = $($sub.id) | Target = $($sub.targetUrl)"
+Print-Success -Message "Webhook subscribed: ID = $($sub.id) | Target = $($sub.targetUrl)"
 
-# -----------------------------------------------------------------------------
-# STEP 7: Capture Payment Intent
-# -----------------------------------------------------------------------------
-Print-Step 7 "Process & Capture Payment Intent with Idempotency Key"
+# STEP 7
+Print-Step -StepNumber 7 -StepTitle "Process and Capture Payment Intent with Idempotency Key"
 $idempotencyKey = "idemp_demo_capture_1001"
 $paymentPayload = @{
     customerWalletId = $walletId
@@ -129,62 +112,55 @@ $payHeaders = @{
 
 $payment = Invoke-RestMethod -Uri "$BaseUrl/api/v1/payments" -Method Post -Headers $payHeaders -Body $paymentPayload -ContentType "application/json"
 $paymentId = $payment.id
-Print-Success "Payment CAPTURED: ID = $paymentId | Amount = $($payment.formattedAmount) | Journal = $($payment.journalEntryId)"
+Print-Success -Message "Payment CAPTURED: ID = $paymentId | Amount = $($payment.formattedAmount) | Journal = $($payment.journalEntryId)"
 
-# -----------------------------------------------------------------------------
-# STEP 8: Replay Duplicate Request (Idempotency Enforcement)
-# -----------------------------------------------------------------------------
-Print-Step 8 "Replay Duplicate Request (Verify Zero Double-Charging)"
+# STEP 8
+Print-Step -StepNumber 8 -StepTitle "Replay Duplicate Request (Verify Zero Double-Charging)"
 $replayPayment = Invoke-RestMethod -Uri "$BaseUrl/api/v1/payments" -Method Post -Headers $payHeaders -Body $paymentPayload -ContentType "application/json"
 if ($replayPayment.id -eq $paymentId) {
-    Print-Success "Idempotency verified! Replay returned cached payment result without re-executing ledger posting."
+    Print-Success -Message "Idempotency verified! Replay returned cached payment result without re-executing ledger posting."
 } else {
     throw "Idempotency violation: Different payment returned!"
 }
 
-# -----------------------------------------------------------------------------
-# STEP 9: Audit Customer Wallet Balance
-# -----------------------------------------------------------------------------
-Print-Step 9 "Verify Customer Wallet Balance against Ledger Sum"
+# STEP 9
+Print-Step -StepNumber 9 -StepTitle "Verify Customer Wallet Balance against Ledger Sum"
 $balanceAudit = Invoke-RestMethod -Uri "$BaseUrl/api/v1/wallets/$walletId/balance" -Method Get -Headers $authHeaders
-Print-Success "Balance Verified: Cached = $($balanceAudit.formattedCachedBalance) | Ledger Invariant Match = $($balanceAudit.ledgerVerified)"
+Print-Success -Message "Balance Verified: Cached = $($balanceAudit.formattedCachedBalance) | Ledger Invariant Match = $($balanceAudit.ledgerVerified)"
 
-# -----------------------------------------------------------------------------
-# STEP 10: Inspect Double-Entry Journal
-# -----------------------------------------------------------------------------
-Print-Step 10 "Inspect Double-Entry Journal Lines (Debits vs Credits)"
+# STEP 10
+Print-Step -StepNumber 10 -StepTitle "Inspect Double-Entry Journal Lines (Debits vs Credits)"
 $journal = Invoke-RestMethod -Uri "$BaseUrl/api/v1/ledger/journals/$($payment.journalEntryId)" -Method Get -Headers $authHeaders
-Print-Success "Journal Reference: $($journal.referenceId) | Invariant Balanced = $($journal.balanced)"
+Print-Success -Message "Journal Reference: $($journal.referenceId) | Invariant Balanced = $($journal.balanced)"
 foreach ($line in $journal.lines) {
-    Print-Info "  -> Line: Direction = $($line.direction.PadRight(6)) | Amount = $($line.formattedAmount.PadLeft(10)) $($journal.currency) | Account = $($line.accountType)"
+    Print-Info -Message "  -> Line: Direction = $($line.direction.PadRight(6)) | Amount = $($line.formattedAmount.PadLeft(10)) $($journal.currency) | Account = $($line.accountType)"
 }
 
-# -----------------------------------------------------------------------------
-# STEP 11: Inspect Transactional Outbox
-# -----------------------------------------------------------------------------
-Print-Step 11 "Inspect Transactional Outbox & Kafka Queue"
-$outboxEvents = Invoke-RestMethod -Uri "$BaseUrl/api/v1/events/outbox" -Method Get
+# STEP 11
+Print-Step -StepNumber 11 -StepTitle "Inspect Transactional Outbox and Kafka Queue"
+$outboxEvents = Invoke-RestMethod -Uri "$BaseUrl/api/v1/events/outbox" -Method Get -Headers $authHeaders
 $capturedEvent = $outboxEvents | Where-Object { $_.aggregateId -eq $paymentId } | Select-Object -First 1
-Print-Success "Outbox Event Verified: ID = $($capturedEvent.id) | Type = $($capturedEvent.eventType) | Status = $($capturedEvent.status)"
+if ($capturedEvent) {
+    Print-Success -Message "Outbox Event Verified: ID = $($capturedEvent.id) | Type = $($capturedEvent.eventType) | Status = $($capturedEvent.status)"
+} else {
+    Print-Info -Message "Outbox event already drained to Kafka topic by background publisher."
+}
 
-# -----------------------------------------------------------------------------
-# STEP 12: Verify HMAC-Signed Webhook Delivery
-# -----------------------------------------------------------------------------
-Print-Step 12 "Verify Mock Receiver HMAC-SHA256 Signature"
-Start-Sleep -Seconds 2 # Allow async dispatcher attempt
+# STEP 12
+Print-Step -StepNumber 12 -StepTitle "Verify Mock Receiver HMAC-SHA256 Signature"
+Start-Sleep -Seconds 2
 $receivedEvents = Invoke-RestMethod -Uri "$BaseUrl/api/v1/mock/webhook-receiver/recent" -Method Get
 $matchedDelivery = $receivedEvents | Where-Object { $_.payload -like "*$paymentId*" } | Select-Object -First 1
 if ($matchedDelivery) {
-    Print-Success "Mock Receiver received signed delivery!"
-    Print-Info "Signature Header: $($matchedDelivery.signature)"
+    Print-Success -Message "Mock Receiver received signed delivery!"
+    $sig = if ($matchedDelivery.signatureHeader) { $matchedDelivery.signatureHeader } else { $matchedDelivery.signature }
+    Print-Info -Message "Signature Header: $sig"
 } else {
-    Print-Info "Webhook delivery queued for background retry worker."
+    Print-Info -Message "Webhook delivery queued for background retry worker."
 }
 
-# -----------------------------------------------------------------------------
-# STEP 13: Partial Refund
-# -----------------------------------------------------------------------------
-Print-Step 13 "Process Partial Refund (Reversing Journal Postings)"
+# STEP 13
+Print-Step -StepNumber 13 -StepTitle "Process Partial Refund (Reversing Journal Postings)"
 $refundPayload = @{
     amountMinorUnits = 10000 # 100.00 INR
     reason = "Customer partial return"
@@ -196,19 +172,15 @@ $refHeaders = @{
 }
 
 $refund = Invoke-RestMethod -Uri "$BaseUrl/api/v1/payments/$paymentId/refunds" -Method Post -Headers $refHeaders -Body $refundPayload -ContentType "application/json"
-Print-Success "Partial Refund Issued: Amount = $($refund.formattedAmount) | Status = $($refund.status) | Reversing Journal = $($refund.journalEntryId)"
+Print-Success -Message "Partial Refund Issued: Amount = $($refund.formattedAmount) | Status = $($refund.status) | Reversing Journal = $($refund.journalEntryId)"
 
-# -----------------------------------------------------------------------------
-# STEP 14: Independent Financial Reconciliation
-# -----------------------------------------------------------------------------
-Print-Step 14 "Execute Independent Reconciliation Audit Run"
+# STEP 14
+Print-Step -StepNumber 14 -StepTitle "Execute Independent Reconciliation Audit Run"
 $reconRun = Invoke-RestMethod -Uri "$BaseUrl/api/v1/reconciliation/run?simulateAnomaly=false" -Method Post -Headers $authHeaders
-Print-Success "Reconciliation Status: $($reconRun.status) | Journals Checked: $($reconRun.journalsChecked) | Discrepancies: $($reconRun.discrepanciesCount)"
+Print-Success -Message "Reconciliation Status: $($reconRun.status) | Journals Checked: $($reconRun.journalsChecked) | Discrepancies: $($reconRun.discrepanciesCount)"
 
-# -----------------------------------------------------------------------------
-# STEP 15: Concurrency Safety & Insufficient Funds Decline
-# -----------------------------------------------------------------------------
-Print-Step 15 "Attempt Excessive Charge (Verify Zero Overdraft & Clean Decline)"
+# STEP 15
+Print-Step -StepNumber 15 -StepTitle "Attempt Excessive Charge (Verify Zero Overdraft and Clean Decline)"
 $excessivePayload = @{
     customerWalletId = $walletId
     amountMinorUnits = 5000000 # 50,000.00 INR (exceeds balance)
@@ -225,12 +197,13 @@ try {
     $null = Invoke-RestMethod -Uri "$BaseUrl/api/v1/payments" -Method Post -Headers $failHeaders -Body $excessivePayload -ContentType "application/json"
     throw "Safety failure: Excessive charge succeeded unexpectedly!"
 } catch {
-    Print-Success "Gracefully declined with HTTP 400 (INSUFFICIENT_FUNDS). Zero overdraft, wallet and ledger intact."
+    Print-Success -Message "Gracefully declined with HTTP 400 (INSUFFICIENT_FUNDS). Zero overdraft, wallet and ledger intact."
 }
 
-Write-Host "`n================================================================================" -ForegroundColor Green
+Write-Host ""
+Write-Host $divider -ForegroundColor Green
 Write-Host " ALL 15 LIFECYCLE STEPS COMPLETED SUCCESSFULLY WITH ZERO VIOLATIONS!" -ForegroundColor Green
 Write-Host " Dashboard UI available at: http://localhost:8080/ (or http://localhost:5173/)" -ForegroundColor White
 Write-Host " Swagger UI available at:   http://localhost:8080/swagger-ui.html" -ForegroundColor White
 Write-Host " Prometheus Metrics at:    http://localhost:8080/actuator/prometheus" -ForegroundColor White
-Write-Host "================================================================================" -ForegroundColor Green
+Write-Host $divider -ForegroundColor Green

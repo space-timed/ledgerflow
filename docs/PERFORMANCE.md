@@ -26,7 +26,7 @@ The benchmark evaluates the system under aggressive concurrent contention where 
 
 ## 2. Empirical Benchmark Results
 
-The following numbers were measured directly using [`BenchmarkLoadHarnessTest.java`](file:///C:/agy/sideprojects_for_resume/payment-engine/src/test/java/com/ledgerflow/performance/BenchmarkLoadHarnessTest.java) on the development workstation:
+The following numbers were measured directly using [`BenchmarkLoadHarnessTest.java`](../src/test/java/com/ledgerflow/performance/BenchmarkLoadHarnessTest.java):
 
 | Benchmark Run | Concurrency (Threads) | Completed Payments | Declined Payments | Throughput (req/s) | p50 Latency (ms) | p95 Latency (ms) | p99 Latency (ms) | Invariant Violations |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |

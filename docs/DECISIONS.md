@@ -69,24 +69,24 @@
 
 ---
 
-## ADR-007: Docker Compose Profile Strategy for Resource Optimization
+## ADR-007: Docker Compose Profile Strategy for Modular Service Composition
 - **Status**: Accepted
-- **Context**: The host machine is a laptop with 20 GB RAM and ~7.6 GB free physical memory. Running Kafka, Zookeeper, PostgreSQL, Redis, Prometheus, Grafana, and frontend simultaneously could stress resources.
+- **Context**: Running all infrastructure services (PostgreSQL, Kafka, Redis, Prometheus, Grafana) simultaneously can introduce unnecessary resource overhead for developers who only need core persistence or event pipelines during targeted testing.
 - **Decision**: Structure `compose.yaml` with clean Docker Compose profiles:
-  - `core`: PostgreSQL (dedicated port 5433 to avoid collision with existing 5432 container)
-  - `events`: Apache Kafka (KRaft mode, avoiding separate Zookeeper container)
-  - `observability`: Prometheus & Grafana
-  - `full`: All services
+  - `core`: PostgreSQL database container for transactional development.
+  - `events`: Apache Kafka (KRaft mode, avoiding separate Zookeeper container) for asynchronous event pipelines.
+  - `observability`: Prometheus & Grafana for metrics collection and dashboards.
+  - `full`: All combined services.
 - **Consequences**:
-  - Minimal base memory footprint (~350 MB for core).
-  - Rapid local startup without running unnecessary daemons.
+  - Minimal base resource footprint when running core workflows.
+  - Rapid local development startup without requiring every peripheral service.
 
 ---
 
-## ADR-008: Adoption of Installed Java 26 Environment
+## ADR-008: Java 21 LTS Target with Multi-JDK Toolchain Compatibility
 - **Status**: Accepted
-- **Context**: The developer environment has OpenJDK 26 (`C:\Installations\jdk26`) and Apache Maven 3.9.16 pre-installed.
-- **Decision**: Leverage the existing OpenJDK 26 installation directly, configuring Maven and the compiler plugins to target Java 21 bytecode compatibility (`--release 21`).
+- **Context**: Modern Spring Boot 3.4 requires a baseline of Java 17+, with Java 21 being the preferred long-term support (LTS) release for virtual threads and modern language enhancements.
+- **Decision**: Target Java 21 bytecode compatibility (`--release 21`) in Maven while ensuring seamless compilation on modern OpenJDK releases (Java 21 through Java 26).
 - **Consequences**:
-  - No need to download or install a separate JDK.
+  - Produces standard Java 21 LTS classfiles runnable across standard enterprise container runtimes.
   - Maintains full compatibility with Spring Boot 3.4.x and standard JVM libraries.

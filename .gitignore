@@ -63,3 +63,8 @@ test-output/
 reports/
 coverage/
 .testcontainers/
+
+# Local planning and scratch notes
+*IMPLEMENTATION_PLAN*
+docs/IMPLEMENTATION_PLAN.md
+scratch/

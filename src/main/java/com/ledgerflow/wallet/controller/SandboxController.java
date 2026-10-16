@@ -22,7 +22,7 @@ public class SandboxController {
         this.walletService = walletService;
     }
 
-    @PostMapping("/funding")
+    @PostMapping({"/funding", "/fund-wallet"})
     @Operation(summary = "Fund a sandbox wallet via double-entry journal", description = "Credits the customer wallet from the system clearing account using balanced double-entry accounting.")
     public ResponseEntity<WalletService.SandboxFundingResult> fundWallet(
             @Parameter(description = "Optional idempotency key")
