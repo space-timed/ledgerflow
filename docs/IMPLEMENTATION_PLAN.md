@@ -34,22 +34,22 @@
 - [x] Create single documented startup scripts (`scripts/dev-up.ps1` / `scripts/dev-down.ps1`)
 - [x] Phase Exit Verification: Green integration smoke test connecting to live PostgreSQL container and health check verification
 
-### PHASE 2 — Merchant, Wallet and Ledger Accounting [CURRENT]
-- [ ] Domain Module: `merchant` (Merchant entity, API Key generation & SHA-256 hashing, API Key Auth filter, multi-tenant isolation)
-- [ ] Domain Module: `ledger` (Immutable Accounts, Journals, Journal Lines, double-entry verification engine)
-- [ ] Domain Module: `wallet` (Customer wallets, currency validation, balance query, deterministic balance computation)
-- [ ] Sandbox Funding Service (`POST /api/v1/sandbox/funding`) via double-entry journal from system clearing account
-- [ ] Balance invariant enforcement: sum(debits) == sum(credits) in every journal entry
-- [ ] Unit & Integration tests for:
+### PHASE 2 — Merchant, Wallet and Ledger Accounting [COMPLETED]
+- [x] Domain Module: `merchant` (Merchant entity, API Key generation & SHA-256 hashing, API Key Auth filter, multi-tenant isolation)
+- [x] Domain Module: `ledger` (Immutable Accounts, Journals, Journal Lines, double-entry verification engine)
+- [x] Domain Module: `wallet` (Customer wallets, currency validation, balance query, deterministic balance computation)
+- [x] Sandbox Funding Service (`POST /api/v1/sandbox/funding`) via double-entry journal from system clearing account
+- [x] Balance invariant enforcement: sum(debits) == sum(credits) in every journal entry
+- [x] Unit & Integration tests for:
   - Wallet creation & merchant scoping
   - Sandbox funding
   - Balanced postings validation
   - Currency exponent & ISO validation (minor units: paise, cents)
   - Negative/zero amount rejection
   - Transaction rollback on unbalanced journals
-- [ ] Phase Exit Verification: Tested immutable double-entry ledger with merchant isolation
+- [x] Phase Exit Verification: Tested immutable double-entry ledger with merchant isolation (8/8 tests passing)
 
-### PHASE 3 — Payment Processing and Refunds
+### PHASE 3 — Payment Processing and Refunds [CURRENT]
 - [ ] Domain Module: `payment` (Payment entity, status lifecycle machine: `CREATED`, `CAPTURED`, `FAILED`, `PARTIALLY_REFUNDED`, `REFUNDED`)
 - [ ] Payment Intent & Capture workflow (`POST /api/v1/payments`, `POST /api/v1/payments/{id}/capture`)
 - [ ] Concurrency Control: PostgreSQL row-level locking (`SELECT ... FOR UPDATE`) with deterministic account ID ordering
