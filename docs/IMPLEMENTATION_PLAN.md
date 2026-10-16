@@ -110,11 +110,11 @@
 - [x] Document actual metrics in `docs/PERFORMANCE.md`
 - [x] Phase Exit Verification: Measured throughput, latency percentiles, and zero race conditions under load (19/19 tests passing)
 
-### PHASE 8 — End-to-End Verification & GitHub Publication
-- [ ] End-to-end automated demo script (`scripts/run-demo.ps1` / `scripts/run-demo.sh`) executing the complete 15-step scenario
-- [ ] Full clean-slate verification (clean Docker compose, clean Flyway migrations, full test suite pass)
-- [ ] Verification report generated (`docs/TESTING.md`)
-- [ ] High-impact, recruiter-focused `README.md` (concise 120-150 lines, architecture diagram, flow, quick start)
-- [ ] Commit history audit (clean atomic commits, no secrets, no binary clutter)
+### PHASE 8 — End-to-End Verification & GitHub Publication [CURRENT]
+- [x] End-to-end automated demo script (`scripts/run-demo.ps1`) executing the complete 15-step scenario
+- [x] Full clean-slate verification (clean Docker compose, clean Flyway migrations, full test suite pass: 19/19)
+- [x] Verification report generated (`docs/TESTING.md`)
+- [x] High-impact, recruiter-focused `README.md` (concise 120-150 lines, architecture diagram, flow, quick start)
+- [x] Commit history audit (clean atomic commits, no secrets, no binary clutter)
 - [ ] Present publication report & request user final approval before pushing to `https://github.com/space-timed/payment-engine`
 - [ ] Create repository via `gh` CLI, push `main`, and verify GitHub rendering
