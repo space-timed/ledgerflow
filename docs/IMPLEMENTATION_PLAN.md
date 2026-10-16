@@ -73,16 +73,16 @@
   - Duplicate event delivery tolerance (at-least-once -> exactly-once business effect)
 - [x] Phase Exit Verification: Durable, observable, and crash-resilient event pipeline (14/14 tests passing)
 
-### PHASE 5 — Webhooks and Reconciliation Engine [CURRENT]
-- [ ] Domain Module: `webhook` (Subscription management, endpoint verification, HMAC-SHA256 payload signature)
-- [ ] Webhook dispatcher worker (async delivery, HTTP timeouts, exponential backoff with jitter, retry tracking)
-- [ ] Manual webhook redelivery endpoint (`POST /api/v1/webhooks/deliveries/{id}/redeliver`)
-- [ ] SSRF Protection (strict allowlisting of webhook destination IP/hosts, local receiver only)
-- [ ] Mock Webhook Receiver endpoint (`/api/v1/mock/webhook-receiver`) for automated demo & verification
-- [ ] Domain Module: `reconciliation` (Independent auditor verifying ledger debits vs credits, wallet balances vs journal sum, payment totals vs ledger)
-- [ ] Controlled fault-injection test fixture to verify discrepancy detection
-- [ ] Reconciliation reporting API (`POST /api/v1/reconciliation/run`, `GET /api/v1/reconciliation/runs/{id}`)
-- [ ] Phase Exit Verification: Verified HMAC webhook delivery and automated financial reconciliation auditor
+### PHASE 5 — Webhooks and Reconciliation Engine [COMPLETED]
+- [x] Domain Module: `webhook` (Subscription management, endpoint verification, HMAC-SHA256 payload signature)
+- [x] Webhook dispatcher worker (async delivery, HTTP timeouts, exponential backoff with jitter, retry tracking)
+- [x] Manual webhook redelivery endpoint (`POST /api/v1/webhooks/deliveries/{id}/redeliver`)
+- [x] SSRF Protection (strict allowlisting of webhook destination IP/hosts, local receiver only)
+- [x] Mock Webhook Receiver endpoint (`/api/v1/mock/webhook-receiver`) for automated demo & verification
+- [x] Domain Module: `reconciliation` (Independent auditor verifying ledger debits vs credits, wallet balances vs journal sum, payment totals vs ledger)
+- [x] Controlled fault-injection test fixture to verify discrepancy detection
+- [x] Reconciliation reporting API (`POST /api/v1/reconciliation/run`, `GET /api/v1/reconciliation/runs/{id}`)
+- [x] Phase Exit Verification: Verified HMAC webhook delivery and automated financial reconciliation auditor (18/18 tests passing)
 
 ### PHASE 6 — Operational Dashboard (Frontend)
 - [ ] Scaffold React + TypeScript + Vite dashboard in `frontend/`

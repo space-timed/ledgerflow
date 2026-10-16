@@ -17,6 +17,7 @@ public class KafkaConfig {
     public static final String PAYMENT_EVENTS_DLT = "ledgerflow.payment.events.DLT";
 
     @Bean
+    @org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(name = "spring.kafka.admin.auto-create", havingValue = "true", matchIfMissing = true)
     public NewTopic paymentEventsTopic() {
         return TopicBuilder.name(PAYMENT_EVENTS_TOPIC)
                 .partitions(3)
@@ -25,6 +26,7 @@ public class KafkaConfig {
     }
 
     @Bean
+    @org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(name = "spring.kafka.admin.auto-create", havingValue = "true", matchIfMissing = true)
     public NewTopic paymentEventsDltTopic() {
         return TopicBuilder.name(PAYMENT_EVENTS_DLT)
                 .partitions(1)

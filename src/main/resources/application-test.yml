@@ -13,6 +13,8 @@ spring:
   kafka:
     listener:
       auto-startup: false
+    admin:
+      auto-create: false
 
 logging:
   level:
