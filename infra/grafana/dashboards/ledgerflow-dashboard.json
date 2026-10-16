@@ -1,0 +1,127 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 6, "x": 0, "y": 0 },
+      "id": 1,
+      "title": "Payment Rate (req/sec)",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "editorMode": "code",
+          "expr": "sum(rate(payment_engine_payments_total[1m]))",
+          "legendFormat": "Payments / sec",
+          "range": true,
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 6, "x": 6, "y": 0 },
+      "id": 2,
+      "title": "Total Captured Payments",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "editorMode": "code",
+          "expr": "sum(payment_engine_payments_total{status=\"CAPTURED\"})",
+          "legendFormat": "Captured",
+          "range": true,
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 0 },
+      "id": 3,
+      "title": "Invariant Violations (Double-Entry Audit)",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "editorMode": "code",
+          "expr": "payment_engine_ledger_invariant_violations_total",
+          "legendFormat": "Violations",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "thresholds": {
+        "mode": "absolute",
+        "steps": [
+          { "color": "green", "value": null },
+          { "color": "red", "value": 1 }
+        ]
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 0 },
+      "id": 4,
+      "title": "Pending Outbox Backlog",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "editorMode": "code",
+          "expr": "payment_engine_outbox_backlog_gauge",
+          "legendFormat": "Backlog",
+          "range": true,
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 8 },
+      "id": 5,
+      "title": "Payment Latency Percentiles (p50, p95, p99)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "editorMode": "code",
+          "expr": "payment_engine_payment_duration_seconds{quantile=~\"0.5|0.95|0.99\"}",
+          "legendFormat": "p{{quantile}}",
+          "range": true,
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 8 },
+      "id": 6,
+      "title": "JVM Heap Memory Usage",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "Prometheus" },
+          "editorMode": "code",
+          "expr": "jvm_memory_used_bytes{area=\"heap\"}",
+          "legendFormat": "Heap Used",
+          "range": true,
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["ledgerflow", "fintech", "payments"],
+  "time": { "from": "now-15m", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "LedgerFlow — Distributed Payment Engine Observability",
+  "version": 1
+}

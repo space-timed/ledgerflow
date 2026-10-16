@@ -54,6 +54,33 @@ services:
     ports:
       - "6379:6379"
 
+  payment-engine-prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: payment-engine-prometheus
+    restart: unless-stopped
+    profiles: ["observability", "full"]
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+
+  payment-engine-grafana:
+    image: grafana/grafana:10.4.0
+    container_name: payment-engine-grafana
+    restart: unless-stopped
+    profiles: ["observability", "full"]
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./infra/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./infra/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./infra/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+    depends_on:
+      - payment-engine-prometheus
+
 volumes:
   postgres_data:
     name: payment_engine_postgres_data

@@ -97,18 +97,18 @@
 - [x] Mock sandbox simulator panel: Trigger test payments, refunds, and simulated failures directly from UI
 - [x] Phase Exit Verification: Responsive, real-data dashboard ready for recruiter evaluation and screenshots (Vite bundle built & bundled into Spring static resources)
 
-### PHASE 7 — Observability, Security and Performance
-- [ ] Micrometer & Prometheus metrics instrumentation (payments/sec, p50/p95/p99 latency, outbox backlog, ledger invariants)
-- [ ] Docker Compose profile `observability` (Prometheus + Grafana with pre-configured dashboard JSON)
-- [ ] Security audit: API key hashing, input sanitization, safe error masks, CORS, non-root container users
-- [ ] Performance Load Harness (`scripts/load-test.ps1` or standalone Java harness)
-- [ ] Execute realistic bounded benchmarks:
-  - 10 concurrent payments
-  - 50 concurrent payments
-  - 100 concurrent payments competing for identical wallet funds
-  - Measure p50, p95, p99, throughput, zero double-spend verification
-- [ ] Document actual metrics in `docs/PERFORMANCE.md`
-- [ ] Phase Exit Verification: Measured throughput, latency percentiles, and zero race conditions under load
+### PHASE 7 — Observability, Security and Performance [COMPLETED]
+- [x] Micrometer & Prometheus metrics instrumentation (payments/sec, p50/p95/p99 latency, outbox backlog, ledger invariants)
+- [x] Docker Compose profile `observability` (Prometheus + Grafana with pre-configured dashboard JSON)
+- [x] Security audit: API key hashing, input sanitization, safe error masks, CORS, non-root container users
+- [x] Performance Load Harness (`scripts/load-test.ps1` and `BenchmarkLoadHarnessTest.java`)
+- [x] Execute realistic bounded benchmarks:
+  - 10 concurrent payments (53.12 req/sec, p50=147.56ms, zero invariant violations)
+  - 50 concurrent payments (121.41 req/sec, p50=260.84ms, zero invariant violations)
+  - 100 concurrent payments competing for identical wallet funds (173.21 req/sec, p50=391.28ms, zero invariant violations)
+  - Measured p50, p95, p99, throughput, zero double-spend verification
+- [x] Document actual metrics in `docs/PERFORMANCE.md`
+- [x] Phase Exit Verification: Measured throughput, latency percentiles, and zero race conditions under load (19/19 tests passing)
 
 ### PHASE 8 — End-to-End Verification & GitHub Publication
 - [ ] End-to-end automated demo script (`scripts/run-demo.ps1` / `scripts/run-demo.sh`) executing the complete 15-step scenario

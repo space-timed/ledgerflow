@@ -39,17 +39,20 @@ public class PaymentService {
     private final LedgerService ledgerService;
     private final OutboxEventRepository outboxEventRepository;
     private final ObjectMapper objectMapper;
+    private final com.ledgerflow.common.metrics.PaymentEngineMetrics metrics;
 
     public PaymentService(PaymentRepository paymentRepository,
                           WalletRepository walletRepository,
                           LedgerService ledgerService,
                           OutboxEventRepository outboxEventRepository,
-                          ObjectMapper objectMapper) {
+                          ObjectMapper objectMapper,
+                          com.ledgerflow.common.metrics.PaymentEngineMetrics metrics) {
         this.paymentRepository = paymentRepository;
         this.walletRepository = walletRepository;
         this.ledgerService = ledgerService;
         this.outboxEventRepository = outboxEventRepository;
         this.objectMapper = objectMapper;
+        this.metrics = metrics;
     }
 
     public record PaymentResult(
@@ -73,6 +76,7 @@ public class PaymentService {
                                         CurrencyCode currency,
                                         String description,
                                         String idempotencyKey) {
+        long startTime = System.nanoTime();
         if (amountMinorUnits <= 0) {
             throw new BusinessException(ErrorCode.INVALID_AMOUNT, "Payment amount must be greater than zero minor units");
         }
@@ -106,6 +110,10 @@ public class PaymentService {
             Payment savedFailed = paymentRepository.save(failedPayment);
 
             recordOutboxEvent("PAYMENT", savedFailed.getId().toString(), "payment.failed", savedFailed);
+
+            if (metrics != null) {
+                metrics.recordPaymentFailure(currency.name(), "INSUFFICIENT_FUNDS", System.nanoTime() - startTime);
+            }
 
             throw new BusinessException(ErrorCode.INSUFFICIENT_FUNDS,
                     String.format("Customer wallet [%s] has available balance %s, but required %s",
@@ -148,6 +156,10 @@ public class PaymentService {
 
         // 6. Record outbox event for Kafka publishing
         recordOutboxEvent("PAYMENT", savedPayment.getId().toString(), "payment.captured", savedPayment);
+
+        if (metrics != null) {
+            metrics.recordPaymentSuccess(currency.name(), System.nanoTime() - startTime);
+        }
 
         log.info("Payment captured: [{}] amount: {} {}. Remaining wallet balance: {}. Journal: [{}]",
                 savedPayment.getId(), amountMinorUnits, currency, newBalance, journal.getId());
