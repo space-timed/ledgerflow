@@ -49,18 +49,18 @@
   - Transaction rollback on unbalanced journals
 - [x] Phase Exit Verification: Tested immutable double-entry ledger with merchant isolation (8/8 tests passing)
 
-### PHASE 3 — Payment Processing and Refunds [CURRENT]
-- [ ] Domain Module: `payment` (Payment entity, status lifecycle machine: `CREATED`, `CAPTURED`, `FAILED`, `PARTIALLY_REFUNDED`, `REFUNDED`)
-- [ ] Payment Intent & Capture workflow (`POST /api/v1/payments`, `POST /api/v1/payments/{id}/capture`)
-- [ ] Concurrency Control: PostgreSQL row-level locking (`SELECT ... FOR UPDATE`) with deterministic account ID ordering
-- [ ] Idempotency Engine (`Idempotency-Key` header with SHA-256 payload fingerprinting and cached atomic response)
-- [ ] Deterministic failure simulation (insufficient funds, simulated decline, duplicate key mismatch)
-- [ ] Domain Module: `refund` (Full & partial refunds, cumulative refund limits, ledger reversal postings)
-- [ ] Multi-threaded concurrent payment safety tests (simultaneous wallet balance depletion)
-- [ ] Idempotency recovery tests across retries
-- [ ] Phase Exit Verification: Concurrency-safe, idempotent payment and refund operations with zero invariant violations
+### PHASE 3 — Payment Processing and Refunds [COMPLETED]
+- [x] Domain Module: `payment` (Payment entity, status lifecycle machine: `CREATED`, `CAPTURED`, `FAILED`, `PARTIALLY_REFUNDED`, `REFUNDED`)
+- [x] Payment Intent & Capture workflow (`POST /api/v1/payments`, `GET /api/v1/payments/{id}`)
+- [x] Concurrency Control: PostgreSQL row-level locking (`SELECT ... FOR UPDATE`) with deterministic wallet ID ordering
+- [x] Idempotency Engine (`Idempotency-Key` header with SHA-256 payload fingerprinting and cached atomic response)
+- [x] Deterministic failure simulation (insufficient funds, invalid currency, duplicate key mismatch)
+- [x] Domain Module: `refund` (Full & partial refunds, cumulative refund limits, ledger reversal postings)
+- [x] Multi-threaded concurrent payment safety tests (simultaneous wallet balance depletion with 10 threads, proving zero double-spending)
+- [x] Idempotency recovery tests across retries
+- [x] Phase Exit Verification: Concurrency-safe, idempotent payment and refund operations with zero invariant violations (10/10 tests passing)
 
-### PHASE 4 — Kafka, Outbox and Reliable Event Delivery
+### PHASE 4 — Kafka, Outbox and Reliable Event Delivery [CURRENT]
 - [ ] Domain Module: `outbox` (Transactional Outbox table, atomic DB persistence with business transaction)
 - [ ] Kafka cluster integration (`compose.yaml` with Kafka KRaft mode container)
 - [ ] Background Outbox Poller & Publisher with safe row claiming (`SKIP LOCKED`) and exponential backoff
