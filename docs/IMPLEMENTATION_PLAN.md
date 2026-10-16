@@ -84,18 +84,18 @@
 - [x] Reconciliation reporting API (`POST /api/v1/reconciliation/run`, `GET /api/v1/reconciliation/runs/{id}`)
 - [x] Phase Exit Verification: Verified HMAC webhook delivery and automated financial reconciliation auditor (18/18 tests passing)
 
-### PHASE 6 — Operational Dashboard (Frontend)
-- [ ] Scaffold React + TypeScript + Vite dashboard in `frontend/`
-- [ ] Clean, high-density GitHub-dark aesthetic (Tailwind CSS or minimal CSS modules, Lucide icons)
-- [ ] Views:
+### PHASE 6 — Operational Dashboard (Frontend) [COMPLETED]
+- [x] Scaffold React + TypeScript + Vite dashboard in `frontend/`
+- [x] Clean, high-density GitHub-dark aesthetic (Tailwind CSS or minimal CSS modules, Lucide icons)
+- [x] Views:
   - **Overview**: System throughput, payment status distribution, total processed volume by currency
   - **Payments**: Searchable/filterable transactions, lifecycle badge, linked ledger journal modal
   - **Wallets & Ledger Explorer**: Inspect balance breakdown, immutable double-entry journal postings
   - **Event & Outbox Monitor**: Kafka topics, outbox backlog, failed message inspection
   - **Webhook Deliveries**: Attempt log, signature status, one-click manual redeliver
   - **Reconciliation**: Audit history, invariant status, discrepancy alerts
-- [ ] Mock sandbox simulator panel: Trigger test payments, refunds, and simulated failures directly from UI
-- [ ] Phase Exit Verification: Responsive, real-data dashboard ready for recruiter evaluation and screenshots
+- [x] Mock sandbox simulator panel: Trigger test payments, refunds, and simulated failures directly from UI
+- [x] Phase Exit Verification: Responsive, real-data dashboard ready for recruiter evaluation and screenshots (Vite bundle built & bundled into Spring static resources)
 
 ### PHASE 7 — Observability, Security and Performance
 - [ ] Micrometer & Prometheus metrics instrumentation (payments/sec, p50/p95/p99 latency, outbox backlog, ledger invariants)

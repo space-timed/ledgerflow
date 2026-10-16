@@ -87,6 +87,11 @@ public class WalletService {
     }
 
     @Transactional(readOnly = true)
+    public List<Wallet> listWallets(UUID merchantId) {
+        return walletRepository.findByMerchantId(merchantId);
+    }
+
+    @Transactional(readOnly = true)
     public Wallet getWallet(UUID id, UUID merchantId) {
         return walletRepository.findByIdAndMerchantId(id, merchantId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND, "Wallet not found: " + id));

@@ -72,6 +72,25 @@ public class WalletController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @GetMapping
+    @Operation(summary = "List customer wallets for merchant")
+    public ResponseEntity<java.util.List<WalletResponse>> listWallets() {
+        Merchant merchant = MerchantContext.getMerchant();
+        java.util.List<Wallet> wallets = walletService.listWallets(merchant.getId());
+        java.util.List<WalletResponse> response = wallets.stream()
+                .map(w -> new WalletResponse(
+                        w.getId(),
+                        w.getCustomerId(),
+                        w.getAccount().getId(),
+                        w.getCurrency().name(),
+                        w.getBalanceMinorUnits(),
+                        w.getCurrency().formatMinorUnits(w.getBalanceMinorUnits()),
+                        w.getCreatedAt()
+                ))
+                .toList();
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Get wallet details by ID")
     public ResponseEntity<WalletResponse> getWallet(@PathVariable UUID id) {
