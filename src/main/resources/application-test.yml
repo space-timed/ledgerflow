@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:payment_engine_test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  flyway:
+    enabled: false
+  kafka:
+    listener:
+      auto-startup: false
+
+logging:
+  level:
+    com.ledgerflow: DEBUG
+    org.springframework: WARN
+
+ledgerflow:
+  sandbox:
+    admin-secret: test_master_key
+  outbox:
+    polling-rate-ms: 50000
+    batch-size: 10
+  webhook:
+    dispatcher-enabled: false

@@ -1,0 +1,59 @@
+services:
+  payment-engine-postgres:
+    image: postgres:16
+    container_name: payment-engine-postgres
+    restart: unless-stopped
+    profiles: ["core", "events", "full", "default"]
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-payment_engine}
+      POSTGRES_USER: ${POSTGRES_USER:-payment_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-payment_secret}
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U payment_user -d payment_engine"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  payment-engine-kafka:
+    image: apache/kafka:4.3.1
+    container_name: payment-engine-kafka
+    restart: unless-stopped
+    profiles: ["events", "full"]
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      CLUSTER_ID: 4L622nShTUiT8YCdR3wKWw
+    ports:
+      - "9092:9092"
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-cluster.sh cluster-id --bootstrap-server localhost:9092 || exit 0"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  payment-engine-redis:
+    image: redis:7-alpine
+    container_name: payment-engine-redis
+    restart: unless-stopped
+    profiles: ["events", "full"]
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:
+    name: payment_engine_postgres_data
