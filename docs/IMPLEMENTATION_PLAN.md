@@ -60,20 +60,20 @@
 - [x] Idempotency recovery tests across retries
 - [x] Phase Exit Verification: Concurrency-safe, idempotent payment and refund operations with zero invariant violations (10/10 tests passing)
 
-### PHASE 4 — Kafka, Outbox and Reliable Event Delivery [CURRENT]
-- [ ] Domain Module: `outbox` (Transactional Outbox table, atomic DB persistence with business transaction)
-- [ ] Kafka cluster integration (`compose.yaml` with Kafka KRaft mode container)
-- [ ] Background Outbox Poller & Publisher with safe row claiming (`SKIP LOCKED`) and exponential backoff
-- [ ] Event Schemas: `payment.created`, `payment.captured`, `payment.failed`, `payment.refunded`, `wallet.funded`
-- [ ] Idempotent Kafka Consumer base with consumer deduplication table (`consumed_events`)
-- [ ] Dead-Letter Topic (DLT) routing and poison message isolation
-- [ ] Resilience tests:
+### PHASE 4 — Kafka, Outbox and Reliable Event Delivery [COMPLETED]
+- [x] Domain Module: `outbox` (Transactional Outbox table, atomic DB persistence with business transaction)
+- [x] Kafka cluster integration (`compose.yaml` with Kafka KRaft mode container)
+- [x] Background Outbox Poller & Publisher with safe row claiming (`SKIP LOCKED`) and exponential backoff
+- [x] Event Schemas: `payment.created`, `payment.captured`, `payment.failed`, `payment.refunded`, `wallet.funded`
+- [x] Idempotent Kafka Consumer base with consumer deduplication table (`consumed_events`)
+- [x] Dead-Letter Topic (DLT) routing and poison message isolation
+- [x] Resilience tests:
   - Payment commits when Kafka broker is down (stored safely in outbox)
   - Automatic drain of outbox once Kafka recovers
   - Duplicate event delivery tolerance (at-least-once -> exactly-once business effect)
-- [ ] Phase Exit Verification: Durable, observable, and crash-resilient event pipeline
+- [x] Phase Exit Verification: Durable, observable, and crash-resilient event pipeline (14/14 tests passing)
 
-### PHASE 5 — Webhooks and Reconciliation Engine
+### PHASE 5 — Webhooks and Reconciliation Engine [CURRENT]
 - [ ] Domain Module: `webhook` (Subscription management, endpoint verification, HMAC-SHA256 payload signature)
 - [ ] Webhook dispatcher worker (async delivery, HTTP timeouts, exponential backoff with jitter, retry tracking)
 - [ ] Manual webhook redelivery endpoint (`POST /api/v1/webhooks/deliveries/{id}/redeliver`)
