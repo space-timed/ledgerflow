@@ -24,7 +24,7 @@ public class OpenApiConfig {
                         .description("Production-inspired simulated payment-processing platform featuring double-entry ledger accounting, concurrency safety, idempotent payments, and reliable transactional outbox events.")
                         .contact(new Contact()
                                 .name("space-timed")
-                                .url("https://github.com/space-timed/payment-engine"))
+                                .url("https://github.com/space-timed/ledgerflow"))
                         .license(new License()
                                 .name("Apache 2.0")
                                 .url("https://www.apache.org/licenses/LICENSE-2.0")))

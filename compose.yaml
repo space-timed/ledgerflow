@@ -1,11 +1,11 @@
 services:
-  payment-engine-postgres:
+  ledgerflow-postgres:
     image: postgres:16
-    container_name: payment-engine-postgres
+    container_name: ledgerflow-postgres
     restart: unless-stopped
     profiles: ["core", "events", "full", "default"]
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-payment_engine}
+      POSTGRES_DB: ${POSTGRES_DB:-ledgerflow}
       POSTGRES_USER: ${POSTGRES_USER:-payment_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-payment_secret}
     ports:
@@ -13,15 +13,15 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U payment_user -d payment_engine"]
+      test: ["CMD-SHELL", "pg_isready -U payment_user -d ledgerflow"]
       interval: 5s
       timeout: 5s
       retries: 5
       start_period: 5s
 
-  payment-engine-kafka:
+  ledgerflow-kafka:
     image: apache/kafka:4.3.1
-    container_name: payment-engine-kafka
+    container_name: ledgerflow-kafka
     restart: unless-stopped
     profiles: ["events", "full"]
     environment:
@@ -46,17 +46,17 @@ services:
       retries: 5
       start_period: 10s
 
-  payment-engine-redis:
+  ledgerflow-redis:
     image: redis:7-alpine
-    container_name: payment-engine-redis
+    container_name: ledgerflow-redis
     restart: unless-stopped
     profiles: ["events", "full"]
     ports:
       - "6379:6379"
 
-  payment-engine-prometheus:
+  ledgerflow-prometheus:
     image: prom/prometheus:v2.51.0
-    container_name: payment-engine-prometheus
+    container_name: ledgerflow-prometheus
     restart: unless-stopped
     profiles: ["observability", "full"]
     volumes:
@@ -64,9 +64,9 @@ services:
     ports:
       - "9090:9090"
 
-  payment-engine-grafana:
+  ledgerflow-grafana:
     image: grafana/grafana:10.4.0
-    container_name: payment-engine-grafana
+    container_name: ledgerflow-grafana
     restart: unless-stopped
     profiles: ["observability", "full"]
     environment:
@@ -79,8 +79,8 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - payment-engine-prometheus
+      - ledgerflow-prometheus
 
 volumes:
   postgres_data:
-    name: payment_engine_postgres_data
+    name: ledgerflow_postgres_data

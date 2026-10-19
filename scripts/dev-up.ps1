@@ -12,7 +12,7 @@ docker compose --profile $Profile up -d
 Write-Host "`nWaiting for PostgreSQL on port 5433 to become ready..." -ForegroundColor Yellow
 $retries = 30
 while ($retries -gt 0) {
-    $healthy = docker inspect --format='{{json .State.Health.Status}}' payment-engine-postgres 2>$null
+    $healthy = docker inspect --format='{{json .State.Health.Status}}' ledgerflow-postgres 2>$null
     if ($healthy -eq '"healthy"') {
         Write-Host "PostgreSQL is healthy on localhost:5433!" -ForegroundColor Green
         break

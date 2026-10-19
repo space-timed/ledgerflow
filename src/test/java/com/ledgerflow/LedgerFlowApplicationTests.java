@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class PaymentEngineApplicationTests {
+class LedgerFlowApplicationTests {
 
     @Test
     @DisplayName("Application context loads successfully with test profile")

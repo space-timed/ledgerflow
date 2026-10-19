@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @TestPropertySource(properties = {
-        "spring.datasource.url=jdbc:postgresql://localhost:5433/payment_engine?options=-c%20TimeZone=UTC",
+        "spring.datasource.url=jdbc:postgresql://localhost:5433/ledgerflow?options=-c%20TimeZone=UTC",
         "spring.datasource.username=payment_user",
         "spring.datasource.password=payment_secret",
         "spring.datasource.driver-class-name=org.postgresql.Driver",

@@ -20,7 +20,7 @@ import java.util.UUID;
 public class PaymentEventListener {
 
     private static final Logger log = LoggerFactory.getLogger(PaymentEventListener.class);
-    public static final String CONSUMER_GROUP = "payment-engine-core-group";
+    public static final String CONSUMER_GROUP = "ledgerflow-core-group";
 
     private final ConsumedEventRepository consumedEventRepository;
     private final ObjectMapper objectMapper;

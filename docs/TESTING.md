@@ -44,7 +44,7 @@ The full test suite executes via `mvn test` in ~23 seconds:
 | `WebhookSigningAndDeliveryIntegrationTest`| Webhooks | 2 | Timestamped HMAC-SHA256 signature generation and constant-time verify | **PASS** |
 | `ReconciliationAuditIntegrationTest` | Financial Audit | 2 | Audits all journals and wallets; successfully detects injected anomaly | **PASS** |
 | `BenchmarkLoadHarnessTest` | Load & Latency | 1 | Evaluates 10, 50, and 100 concurrent competing payments with p50/p95/p99 | **PASS** |
-| `PaymentEngineApplicationTests` | Smoke & Context | 2 | Spring Boot application context loads with all actuators active | **PASS** |
+| `LedgerFlowApplicationTests` | Smoke & Context | 2 | Spring Boot application context loads with all actuators active | **PASS** |
 
 **Total Suite Statistics:**
 - **Tests Run:** 19

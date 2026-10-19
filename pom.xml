@@ -12,10 +12,10 @@
     </parent>
 
     <groupId>com.ledgerflow</groupId>
-    <artifactId>payment-engine</artifactId>
+    <artifactId>ledgerflow</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <name>payment-engine</name>
-    <description>Distributed Payment Engine with Double-Entry Ledger and Event-Driven Architecture</description>
+    <name>ledgerflow</name>
+    <description>LedgerFlow — Distributed Payment Engine with Double-Entry Ledger and Event-Driven Architecture</description>
 
     <properties>
         <java.version>21</java.version>

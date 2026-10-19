@@ -39,14 +39,14 @@ public class PaymentService {
     private final LedgerService ledgerService;
     private final OutboxEventRepository outboxEventRepository;
     private final ObjectMapper objectMapper;
-    private final com.ledgerflow.common.metrics.PaymentEngineMetrics metrics;
+    private final com.ledgerflow.common.metrics.LedgerFlowMetrics metrics;
 
     public PaymentService(PaymentRepository paymentRepository,
                           WalletRepository walletRepository,
                           LedgerService ledgerService,
                           OutboxEventRepository outboxEventRepository,
                           ObjectMapper objectMapper,
-                          com.ledgerflow.common.metrics.PaymentEngineMetrics metrics) {
+                          com.ledgerflow.common.metrics.LedgerFlowMetrics metrics) {
         this.paymentRepository = paymentRepository;
         this.walletRepository = walletRepository;
         this.ledgerService = ledgerService;

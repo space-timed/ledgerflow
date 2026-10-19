@@ -1,11 +1,11 @@
 spring:
   application:
-    name: payment-engine
+    name: ledgerflow
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
 
   datasource:
-    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5433}/${POSTGRES_DB:payment_engine}?options=-c%20TimeZone=UTC
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5433}/${POSTGRES_DB:ledgerflow}?options=-c%20TimeZone=UTC
     username: ${POSTGRES_USER:payment_user}
     password: ${POSTGRES_PASSWORD:payment_secret}
     driver-class-name: org.postgresql.Driver
@@ -44,7 +44,7 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
     consumer:
-      group-id: payment-engine-group
+      group-id: ledgerflow-group
       auto-offset-reset: earliest
       enable-auto-commit: false
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer

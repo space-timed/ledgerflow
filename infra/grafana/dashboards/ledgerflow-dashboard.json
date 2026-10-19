@@ -17,7 +17,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "Prometheus" },
           "editorMode": "code",
-          "expr": "sum(rate(payment_engine_payments_total[1m]))",
+          "expr": "sum(rate(ledgerflow_payments_total[1m]))",
           "legendFormat": "Payments / sec",
           "range": true,
           "refId": "A"
@@ -34,7 +34,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "Prometheus" },
           "editorMode": "code",
-          "expr": "sum(payment_engine_payments_total{status=\"CAPTURED\"})",
+          "expr": "sum(ledgerflow_payments_total{status=\"CAPTURED\"})",
           "legendFormat": "Captured",
           "range": true,
           "refId": "A"
@@ -51,7 +51,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "Prometheus" },
           "editorMode": "code",
-          "expr": "payment_engine_ledger_invariant_violations_total",
+          "expr": "ledgerflow_ledger_invariant_violations_total",
           "legendFormat": "Violations",
           "range": true,
           "refId": "A"
@@ -75,7 +75,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "Prometheus" },
           "editorMode": "code",
-          "expr": "payment_engine_outbox_backlog_gauge",
+          "expr": "ledgerflow_outbox_backlog_gauge",
           "legendFormat": "Backlog",
           "range": true,
           "refId": "A"
@@ -92,7 +92,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "Prometheus" },
           "editorMode": "code",
-          "expr": "payment_engine_payment_duration_seconds{quantile=~\"0.5|0.95|0.99\"}",
+          "expr": "ledgerflow_payment_duration_seconds{quantile=~\"0.5|0.95|0.99\"}",
           "legendFormat": "p{{quantile}}",
           "range": true,
           "refId": "A"
